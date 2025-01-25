@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `transaction` ADD COLUMN `bayar` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `total` INTEGER NOT NULL DEFAULT 0;
