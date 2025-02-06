@@ -95,7 +95,7 @@ CREATE TABLE `ingredient_transaction` (
     `id_transaction_detail` INTEGER NULL,
     `id_ingredient` INTEGER NOT NULL,
     `qty` INTEGER NOT NULL,
-    `isUsage` TINYINT NOT NULL DEFAULT 0,
+    `is_usage` TINYINT NOT NULL DEFAULT 0,
     `id_user` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -125,8 +125,10 @@ CREATE TABLE `ingredient_holding` (
 -- CreateTable
 CREATE TABLE `transaction_cart` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `total` INTEGER NOT NULL DEFAULT 0,
     `id_table` INTEGER NOT NULL,
     `id_user` VARCHAR(191) NOT NULL,
+    `status` TINYINT NOT NULL DEFAULT 0,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -152,8 +154,9 @@ CREATE TABLE `transaction_cart_detail` (
 -- CreateTable
 CREATE TABLE `transaction` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `total` INTEGER NOT NULL DEFAULT 0,
+    `paid` INTEGER NOT NULL DEFAULT 0,
     `id_user` VARCHAR(191) NOT NULL,
-    `status` TINYINT NOT NULL DEFAULT 0,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
