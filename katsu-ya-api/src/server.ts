@@ -12,6 +12,9 @@ export const io = new Server(server, {
 
 io.on("connection", (socket) => {
     socket.on("newOrder", (msg) => {
-        io.emit("newOrder", msg)
+        io.emit("refreshOrder", msg)
+    })
+    socket.on("finishOrder", (msg) => {
+        io.emit("refreshOrder", msg)
     })
 })

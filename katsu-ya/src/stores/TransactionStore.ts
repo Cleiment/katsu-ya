@@ -221,9 +221,11 @@ export const useTransactionStore = defineStore('transaction', () => {
                 return false
             } else {
                 appStore.addNotification('success', 'Transaction is Finished!')
+                socket.emit('finishOrder', `Finished order on ${selectedTable.value.tableName}`)
                 return rs.transactionId
             }
         }
+
         return true
     }
 

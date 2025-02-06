@@ -42,7 +42,7 @@ onMounted(async () => {
     await refresh()
 })
 
-socket.on('newOrder', (msg) => {
+socket.on('refreshOrder', async (msg) => {
     appStore.addNotification('info', msg)
     refresh()
 })
@@ -72,13 +72,6 @@ appStore.isLoading = false
                             <p class="font-semibold">{{ item.table!.tableName }}</p>
                             <p class="text-sm mb-2">{{ timestampToDatetime(item.createdAt) }}</p>
                         </div>
-                        <button
-                            v-if="authStore.role?.role == 'KITCHEN'"
-                            class="px-4 py-2 bg-blue-500 rounded-lg text-white text-sm"
-                            @click="isPlaceOrderOpen = true"
-                        >
-                            Finish Cook
-                        </button>
                     </div>
                     <table class="table w-full font-normal table-auto relative">
                         <thead class="sticky top-0 shadow bg-white rounded">

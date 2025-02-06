@@ -107,22 +107,22 @@ export default class Menu {
             },
         })
 
-        const menuIngredients: Prisma.MenuIngredientCreateInput[] =
-            ingredients.map((item) => ({
-                ingredient: { connect: { id: item.idIngredient } },
-                qty: item.qty,
-                menu: { connect: { id: menu.id } },
-            }))
-
         await prisma.menu.update({
             where: { id: id },
             data: {
                 name: name,
                 price: price,
-                ingredients: {
-                    create: menuIngredients,
-                },
             },
+        })
+
+        ingredients.forEach(async (item) => {
+            await prisma.menuIngredient.create({
+                data: {
+                    idIngredient: item.idIngredient,
+                    qty: item.qty,
+                    idMenu: menu.id,
+                },
+            })
         })
 
         return { success: "Menu successfuly edited" }

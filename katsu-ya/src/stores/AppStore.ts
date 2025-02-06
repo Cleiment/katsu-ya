@@ -170,7 +170,7 @@ export const useAppStore = defineStore('app', () => {
         return returnResponse
     }
 
-    socket.on('newOrder', (msg) => {
+    socket.on('refreshOrder', (msg) => {
         addNotification('info', msg)
     })
 

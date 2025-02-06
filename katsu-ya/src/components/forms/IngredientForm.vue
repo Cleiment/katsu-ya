@@ -169,6 +169,7 @@ const ingredientUnitStatus = (items: IngredientUnit[]) => {
                 <template v-if="mode == 'edit'">
                     <button
                         v-if="ingredientDetail.status == 1"
+                        @click="isToggleDataConfirmationOpen = true"
                         type="button"
                         class="inline-flex justify-center rounded-md border border-transparent bg-rose-100 px-4 py-2 text-sm font-medium text-red-700 transition-all hover:bg-rose-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2"
                     >
