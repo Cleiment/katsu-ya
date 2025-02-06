@@ -32,6 +32,7 @@ Aplikasi Point of Sale yang merupakan hasil penelitian Capstone Project oleh Cle
 1. Run `npm install` to install all dependencies
 2. Copy `.env.example` to `.env`
 3. Fill out `.env`
+4. Run `npx prisma migrate dev` to migrate the database
 
 ##### Backend - Development
 
