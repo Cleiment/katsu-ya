@@ -1,4 +1,4 @@
-import { response, Router } from "express"
+import { response, Router, json } from "express"
 import User from "./user.controller"
 import { validate } from "../../tools/validate"
 import { requestHandler } from "../../tools/handler"
@@ -6,6 +6,8 @@ import { Roles } from "../../config/env.config"
 
 const router = Router()
 const user = new User()
+
+router.use(json())
 
 router.get(
     "/",

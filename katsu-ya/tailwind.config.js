@@ -7,6 +7,7 @@ export default {
         'max-w-2xl',
         'max-w-3xl',
         'max-w-4xl',
+        'max-w-6xl',
         'text-amber-800',
         'text-amber-700',
         'bg-amber-50',

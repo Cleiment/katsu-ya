@@ -52,19 +52,37 @@ model User {
     @@index([status])
 }
 
-model Menu {
-    id        String   @id @default(cuid())
+model MenuCategory {
+    id        Int      @id @default(autoincrement())
     name      String
-    price     Int
     status    Int      @default(1) @db.TinyInt
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
+    menus Menu[]
+
+    @@index([name])
+    @@map("menu_category")
+}
+
+model Menu {
+    id         String   @id @default(cuid())
+    name       String
+    price      Int
+    status     Int      @default(1) @db.TinyInt
+    picture    String   @default("")
+    desc       String   @default("") @db.Text
+    idCategory Int?
+    createdAt  DateTime @default(now()) @map("created_at")
+    updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
     ingredients           MenuIngredient[]
     transactionDetail     TransactionDetail[]
     TransactionCartDetail TransactionCartDetail[]
+    category              MenuCategory?           @relation(fields: [idCategory], references: [id])
 
     @@index([status])
+    @@index([idCategory])
 }
 
 model MenuIngredient {
@@ -154,11 +172,13 @@ model IngredientHold {
 }
 
 model TransactionCart {
-    id      Int    @id @default(autoincrement())
-    total   Int    @default(0)
-    idTable Int    @map("id_table")
-    idUser  String @map("id_user")
-    status  Int    @default(0) @db.TinyInt
+    id          String @id @default(cuid())
+    total       Int    @default(0)
+    idTable     Int    @map("id_table")
+    idUser      String @map("id_user")
+    paid        Int    @default(0)
+    paymentType String @default("cash") @map("payment_type")
+    paidStatus  Int    @default(0) @db.TinyInt
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
@@ -174,7 +194,7 @@ model TransactionCart {
 
 model TransactionCartDetail {
     id        Int      @id @default(autoincrement())
-    idCart    Int      @map("id_transaction_cart")
+    idCart    String   @map("id_transaction_cart")
     idMenu    String   @map("id_menu")
     menuQty   Int      @map("menu_qty")
     createdAt DateTime @default(now()) @map("created_at")
@@ -190,12 +210,14 @@ model TransactionCartDetail {
 }
 
 model Transaction {
-    id        Int      @id @default(autoincrement())
-    total     Int      @default(0)
-    paid      Int      @default(0)
-    idUser    String   @map("id_user")
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+    id          Int      @id @default(autoincrement())
+    idOrder     String   @unique @default(cuid()) @map("id_order")
+    total       Int      @default(0)
+    paid        Int      @default(0)
+    paymentType String   @default("cash") @map("payment_type")
+    idUser      String   @map("id_user")
+    createdAt   DateTime @default(now()) @map("created_at")
+    updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
 
     cashier User                @relation(fields: [idUser], references: [id])
     detail  TransactionDetail[]

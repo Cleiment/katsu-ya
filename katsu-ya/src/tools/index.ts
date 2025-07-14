@@ -16,8 +16,14 @@ export const dateString = (date: Date, showTime: boolean = false) => {
 }
 
 export const formatMoney = (num: number, currency: boolean = false) => {
-    const curr = currency ? 'Rp' : ''
-    return curr + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    return new Intl.NumberFormat('id-ID', {
+        style: currency ? 'currency' : 'decimal',
+        currency: 'IDR',
+        maximumFractionDigits: 0
+    }).format(num)
 }
 
 export const socket = io(import.meta.env.VITE_API_URL)
+
+export const image = import.meta.env.VITE_API_URL + '/images/'
+export const placeholder = '../../src/image/placeholder.png'

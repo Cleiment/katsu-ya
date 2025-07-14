@@ -1,5 +1,6 @@
 import {
     OValidation,
+    TFileType,
     TValidationFieldError,
     TValidationRequestBody,
     TValidationRequirement,
@@ -100,4 +101,8 @@ export const validate = (
 
     if (Object.keys(validateError).length > 0)
         throw new ValidationError(validateError)
+}
+
+export const booleanFromString = (value: string) => {
+    return value == "true" ? true : false
 }

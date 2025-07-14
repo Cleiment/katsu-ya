@@ -45,7 +45,7 @@ const showDetail = (id: number) => {
                         : 'hover:bg-rose-400/20'
                 "
             >
-                <td class="px-3 py-4 text-center">{{ i + 1 }}</td>
+                <td class="px-3 py-4 text-center">{{ i + 1 + ingredientStore.offset }}</td>
                 <td class="px-3 py-4">{{ ingredient.name }}</td>
                 <td class="px-3 py-4">{{ ingredient.qty }}</td>
                 <td class="px-3 py-4">{{ ingredient.unit?.name }}</td>

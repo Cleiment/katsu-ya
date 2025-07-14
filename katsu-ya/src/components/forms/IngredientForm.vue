@@ -2,7 +2,7 @@
 import { ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from '@headlessui/vue'
 
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { type Ingredient, type IngredientUnit } from '@/tools/types'
 
 import { useAppStore } from '@/stores/AppStore'
@@ -48,6 +48,10 @@ const ingredientUnitStatus = (items: IngredientUnit[]) => {
         return v.status == 1
     })
 }
+
+onMounted(() => {
+    if (!newDetail.unit) newDetail.unit = ingredientUnitStore.data[0]
+})
 </script>
 <template>
     <form action="" @submit.prevent="emits('submit', newDetail)" v-if="ingredientDetail">
@@ -98,9 +102,11 @@ const ingredientUnitStatus = (items: IngredientUnit[]) => {
                                 class="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-yellow-pastel sm:text-sm"
                             >
                                 <span class="block truncate">{{
-                                    ingredientUnitStore.data.filter(
-                                        (item) => item.id == newDetail.unit?.id
-                                    )[0].name
+                                    (
+                                        ingredientUnitStore.data.filter(
+                                            (item) => item.id == newDetail.unit?.id
+                                        )[0] || ingredientUnitStore.data[0]
+                                    ).name
                                 }}</span>
                                 <span
                                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"

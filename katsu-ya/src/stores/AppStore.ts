@@ -13,12 +13,16 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import { socket } from '@/tools'
+// import type { OutgoingHttpHeader } from 'http'
 
 export const useAppStore = defineStore('app', () => {
     const authStore = useAuthStore()
     const isLoading = ref(true)
     const isHotkeying = ref(false)
     const notifications = ref<Notification[]>([])
+
+    const isUsingSidebar = ref<boolean>(true)
+
     const addNotification = (status: ONotificationStatus, body: SuccessResponse | OErrorTypes) => {
         const id = Date.now()
 
@@ -92,12 +96,12 @@ export const useAppStore = defineStore('app', () => {
         sidebarActive.value = !sidebarActive.value
     }
 
-    const setHeaders = () => {
-        const headers = {
-            Authorization: `${authStore.token}`,
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
+    const setHeaders = (isContentTypeJson: boolean) => {
+        const headers: { Authorization: string; 'Content-Type'?: string } = {
+            Authorization: `${authStore.token}`
         }
+
+        if (isContentTypeJson) headers['Content-Type'] = 'application/json'
 
         return headers
     }
@@ -129,8 +133,11 @@ export const useAppStore = defineStore('app', () => {
         else return
     }
 
-    const get = async <T>(url: string): PromiseFetchResponse<T> => {
-        const headers = setHeaders()
+    const get = async <T>(
+        url: string,
+        isContentTypeJson: boolean = true
+    ): PromiseFetchResponse<T> => {
+        const headers = setHeaders(isContentTypeJson)
 
         let returnResponse: FetchResponse<T>
         await fetch(url, { mode: 'cors', headers: headers })
@@ -147,15 +154,19 @@ export const useAppStore = defineStore('app', () => {
         return returnResponse
     }
 
-    const post = async <T>(url: string, body: any): PromiseFetchResponse<T> => {
-        const headers = setHeaders()
+    const post = async <T>(
+        url: string,
+        body: any,
+        isContentTypeJson: boolean = true
+    ): PromiseFetchResponse<T> => {
+        const headers = setHeaders(isContentTypeJson)
 
         let returnResponse: FetchResponse<T>
         await fetch(url, {
             method: 'POST',
             mode: 'cors',
             headers: headers,
-            body: JSON.stringify(body)
+            body: isContentTypeJson ? JSON.stringify(body) : body
         })
             .then((rs) => rs.json())
             .then(async (response) => {
@@ -175,6 +186,7 @@ export const useAppStore = defineStore('app', () => {
     })
 
     return {
+        isUsingSidebar,
         isLoading,
         notifications,
         isHotkeying,

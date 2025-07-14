@@ -1,17 +1,24 @@
 <template>
-    <div class="lg:hidden flex items-center justify-between py-2 px-4">
-        <button role="button" @click="appStore.toggleSidebar">
+    <div
+        class="flex items-center py-2 px-4"
+        :class="appStore.isUsingSidebar ? 'lg:hidden justify-between' : 'justify-center'"
+    >
+        <button
+            role="button"
+            @click="appStore.toggleSidebar"
+            :class="{ hidden: !appStore.isUsingSidebar }"
+        >
             <Bars3Icon class="w-7 h-7" />
         </button>
         <div class="flex items-center">
             <img src="/src/logo.jpg" width="40" alt="Logo" class="" />
             <p class="font-bold">Katsu-Ya</p>
         </div>
-        <span class="w-7"></span>
+        <span class="w-7" :class="{ hidden: !appStore.isUsingSidebar }"></span>
     </div>
     <div
-        class="transition-margin duration-300 ease-out w-screen absolute w-100 sm:w-[274px] lg:ms-0 lg:static h-screen shadow-xl flex flex-col z-20"
-        :class="{ ['-ms-[100vw]']: !appStore.sidebarActive }"
+        class="transition-margin duration-300 ease-out w-screen absolute w-100 sm:w-[274px] lg:ms-0 lg:static h-full overflow-y-auto shadow-xl flex flex-col z-20"
+        :class="{ ['-ms-[100vw]']: !appStore.sidebarActive, ['hidden']: !appStore.isUsingSidebar }"
     >
         <div class="py-3 px-4 bg-red-500 flex items-center gap-2 text-white">
             <img src="/src/logo.jpg" width="40" alt="Logo" class="" />
@@ -20,7 +27,7 @@
                 <XMarkIcon class="w-7 h-7" />
             </button>
         </div>
-        <div class="px-4 bg-rose-200 md:bg-rose-200 grow flex flex-col">
+        <div class="pb-2 px-4 bg-rose-200 md:bg-rose-200 grow flex flex-col">
             <div
                 class="py-3 border-b border-slate-800/50 flex gap-2 items-center"
                 :title="authStore.username"

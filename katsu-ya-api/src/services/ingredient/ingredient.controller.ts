@@ -3,7 +3,50 @@ import prisma from "../../tools/prisma"
 import { ErrorResponse } from "../../definitions/errors"
 
 export default class Ingredient {
-    getIngredientUnits = async () => {
+    getIngredientUnitCounts = async (limit: number = 5) => {
+        const total = await prisma.ingredientUnit.count({
+            where: { status: 1 },
+        })
+        const totalPages = Math.ceil(total / limit)
+
+        return {
+            total: total,
+            totalPages: totalPages,
+        }
+    }
+
+    getIngredientCounts = async (limit: number = 5) => {
+        const total = await prisma.ingredient.count({ where: { status: 1 } })
+        const totalPages = Math.ceil(total / limit)
+
+        return {
+            total: total,
+            totalPages: totalPages,
+        }
+    }
+
+    getIngredientUnitByPage = async (page: number, limit: number) => {
+        const { total, totalPages } = await this.getIngredientUnitCounts(limit)
+
+        const currentPage = Math.min(page, totalPages || 1)
+        const offset = (currentPage - 1) * limit
+
+        const data = await prisma.ingredientUnit.findMany({
+            skip: offset,
+            take: limit,
+            where: { status: 1 },
+        })
+
+        return {
+            total: total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            limit: limit,
+            data: data,
+        }
+    }
+
+    getAllIngredientUnit = async () => {
         const unit = await prisma.ingredientUnit.findMany({
             where: { status: 1 },
         })
@@ -63,7 +106,46 @@ export default class Ingredient {
         return { success: "Ingredient Unit successfuly deactivated!" }
     }
 
-    getIngredients = async () => {
+    getIngredientByPage = async (
+        page: number,
+        limit: number,
+        showDeactivated: boolean
+    ) => {
+        const { total, totalPages } = await this.getIngredientCounts(limit)
+
+        const currentPage = Math.min(page, totalPages || 1)
+        const offset = (currentPage - 1) * limit
+
+        const data = await prisma.ingredient.findMany({
+            skip: offset,
+            take: limit,
+            include: {
+                unit: true,
+                IngredientHold: true,
+            },
+            where: {
+                OR: [{ status: 1 }, { status: showDeactivated ? 0 : 1 }],
+            },
+        })
+
+        data.map((item) => {
+            item.IngredientHold.forEach((v) => {
+                item.qty -= v.qty
+            })
+
+            return item
+        })
+
+        return {
+            total: total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            limit: limit,
+            data: data,
+        }
+    }
+
+    getAllIngredient = async () => {
         const ingredients = await prisma.ingredient.findMany({
             include: {
                 unit: true,
@@ -88,8 +170,13 @@ export default class Ingredient {
             where: { id: id },
             include: {
                 unit: true,
+                // IngredientHold: true,
             },
         })
+
+        // ingredient.IngredientHold.forEach((v) => {
+        //     ingredient.qty -= v.qty
+        // })
 
         return ingredient
     }

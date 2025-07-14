@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, Router } from "express"
+import express, { NextFunction, Request, Response, Router } from "express"
 import Auth from "./auth.controller"
 import { validate } from "../../tools/validate"
 import { requestHandler } from "../../tools/handler"
@@ -8,22 +8,20 @@ import { Roles } from "../../config/env.config"
 const router = Router()
 const auth = new Auth()
 
+router.use(express.json())
+
 router.use(async (req: Request, res: Response, next: NextFunction) => {
-    if (req.url != "/login") {
-        if (!req.headers.authorization) return next(new ErrorResponse())
-        else {
-            const token = req.headers.authorization
-            const userInfo = await auth
-                .checkToken(token)
-                .catch((err) => next(err))
-            res.locals.userInfo = userInfo
-        }
-    } else {
-        const userInfo = {
-            userRole: {
-                role: Roles.guest,
-            },
-        }
+    const userInfo = {
+        id: "cmckrnv8c0001x1aj2zt2eqw2",
+        userRole: {
+            role: Roles.guest,
+        },
+    }
+    res.locals.userInfo = userInfo
+
+    if (req.headers.authorization) {
+        const token = req.headers.authorization
+        const userInfo = await auth.checkToken(token).catch((err) => next(err))
         res.locals.userInfo = userInfo
     }
 

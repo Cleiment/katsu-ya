@@ -20,6 +20,8 @@ export type TValidationFieldError = {
     [k: string]: string[]
 }
 
+export type TFileType = "img" | "doc"
+
 export type Role = {
     id: number
     role: string

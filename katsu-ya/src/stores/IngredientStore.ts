@@ -3,7 +3,9 @@ import {
     isErrorValidation,
     isFetchSuccess,
     type ErrorValidation,
-    type Ingredient
+    type Ingredient,
+    type PaginatedData,
+    type TableLimit
 } from '@/tools/types'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
@@ -29,9 +31,17 @@ export const useIngredientStore = defineStore('ingredient', () => {
     }
 
     const selectedIngredient: Ingredient = newIngredient
+    const selectedLimit = ref<TableLimit>(10)
+    const showDeactivated = ref<boolean>(false)
+    const currentPage = ref(1)
+
+    const total = ref(0)
+    const totalPages = ref(0)
+
+    const offset = ref((currentPage.value - 1) * selectedLimit.value)
 
     const getAll = async () => {
-        const url = import.meta.env.VITE_API_URL + '/ingredient'
+        const url = import.meta.env.VITE_API_URL + '/ingredient/all'
         const rs = await appStore.get<Ingredient[]>(url)
         if (rs && !isErrorResponse(rs) && !isErrorValidation(rs) && !isFetchSuccess(rs))
             data.value = rs.map((v) => {
@@ -41,6 +51,31 @@ export const useIngredientStore = defineStore('ingredient', () => {
 
         await unitStore.getAll()
         newIngredient.unit = unitStore.data[0]
+    }
+
+    const fetchData = async () => {
+        const url =
+            import.meta.env.VITE_API_URL +
+            '/ingredient/' +
+            '?page=' +
+            currentPage.value +
+            '&limit=' +
+            selectedLimit.value +
+            '&show_deactivated=' +
+            showDeactivated.value
+
+        const rs = await appStore.get<PaginatedData<Ingredient[]>>(url)
+        if (rs && !isErrorResponse(rs) && !isErrorValidation(rs) && !isFetchSuccess(rs)) {
+            totalPages.value = rs.totalPages
+            total.value = rs.total
+            currentPage.value = rs.currentPage
+            offset.value = (rs.currentPage - 1) * selectedLimit.value
+
+            data.value = rs.data.map((v) => {
+                if (v.unit?.status == 0) v.status = 0
+                return v
+            })
+        }
     }
 
     const validate = (newIngredient: Ingredient): boolean => {
@@ -123,8 +158,15 @@ export const useIngredientStore = defineStore('ingredient', () => {
         pages,
         newIngredient,
         selectedIngredient,
+        selectedLimit,
+        showDeactivated,
+        currentPage,
+        total,
+        totalPages,
+        offset,
         inputError,
         getAll,
+        fetchData,
         createIngredient,
         editIngredient,
         deactivateIngredient,

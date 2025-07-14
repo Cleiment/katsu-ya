@@ -1,10 +1,16 @@
 import {
+    Menu,
     Prisma,
     TransactionCart,
     TransactionCartDetail,
     TransactionDetail,
 } from "@prisma/client"
 import prisma from "../../tools/prisma"
+import { connect } from "http2"
+import { ErrorResponse } from "../../definitions/errors"
+import { midtransServerKey } from "../../config/env.config"
+
+const midtransClient = require("midtrans-client")
 
 export default class Transaction {
     validateTransactionDetail = (
@@ -111,6 +117,72 @@ export default class Transaction {
         return transaction
     }
 
+    getTransactionByIdOrder = async (id: string) => {
+        const transaction = await prisma.transaction.findUnique({
+            include: {
+                detail: {
+                    select: {
+                        menu: {
+                            select: {
+                                name: true,
+                                price: true,
+                            },
+                        },
+                        menuQty: true,
+                    },
+                },
+                cashier: {
+                    select: {
+                        username: true,
+                    },
+                },
+                _count: {
+                    select: {
+                        detail: true,
+                    },
+                },
+            },
+            where: { idOrder: id },
+        })
+
+        if (transaction) return transaction
+        const transactionCart = await prisma.transactionCart.findUniqueOrThrow({
+            include: {
+                transactionCartDetail: {
+                    select: {
+                        menu: {
+                            select: {
+                                name: true,
+                                price: true,
+                            },
+                        },
+                    },
+                },
+                cashier: {
+                    select: { username: true },
+                },
+                _count: {
+                    select: { transactionCartDetail: true },
+                },
+            },
+            where: { id: id },
+        })
+
+        return transactionCart
+    }
+
+    getAvailableTable = async () => {
+        const table = await prisma.table.findMany({
+            select: {
+                id: true,
+                tableName: true,
+                isOccupied: true,
+            },
+        })
+
+        return table
+    }
+
     createTransaction = async (
         orderedMenus: TransactionDetail[],
         idUser: string
@@ -210,19 +282,46 @@ export default class Transaction {
             orderBy: {
                 createdAt: "asc",
             },
+            // where: {
+            //     status: 0,
+            // },
+        })
+
+        return res
+    }
+
+    getOrderByTable = async (idTable: number) => {
+        const res = await prisma.transactionCart.findMany({
+            include: {
+                table: {
+                    select: {
+                        tableName: true,
+                    },
+                },
+                transactionCartDetail: {
+                    select: {
+                        menu: true,
+                        menuQty: true,
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: "asc",
+            },
             where: {
-                status: 0,
+                idTable: idTable,
             },
         })
 
         return res
     }
 
-    getTransactionCartById = async (id: number) => {
-        const transaction = await prisma.transaction.findUniqueOrThrow({
+    getTransactionCartById = async (id: string) => {
+        const transaction = await prisma.transactionCart.findUniqueOrThrow({
             include: {
-                detail: {
+                transactionCartDetail: {
                     select: {
+                        id: true,
                         menu: {
                             select: {
                                 name: true,
@@ -237,9 +336,15 @@ export default class Transaction {
                         username: true,
                     },
                 },
+                table: {
+                    select: {
+                        id: true,
+                        tableName: true,
+                    },
+                },
                 _count: {
                     select: {
-                        detail: true,
+                        transactionCartDetail: true,
                     },
                 },
             },
@@ -247,6 +352,120 @@ export default class Transaction {
         })
         return transaction
     }
+
+    // createTransactionCart = async (
+    //     orderedMenus: TransactionCartDetail[],
+    //     idUser: string,
+    //     idTable: number
+    // ) => {
+    //     const newCart = await prisma.transactionCart.create({
+    //         data: {
+    //             cashier: { connect: { id: idUser } },
+    //             table: { connect: { id: idTable } },
+    //         },
+    //         include: {
+    //             transactionCartDetail: {
+    //                 select: {
+    //                     id: true,
+    //                     menu: {
+    //                         include: {
+    //                             ingredients: {
+    //                                 select: {
+    //                                     ingredient: {
+    //                                         select: {
+    //                                             id: true,
+    //                                         },
+    //                                     },
+    //                                     qty: true,
+    //                                 },
+    //                             },
+    //                         },
+    //                     },
+    //                     menuQty: true,
+    //                 },
+    //             },
+    //         },
+    //     })
+
+    //     await prisma.table.update({
+    //         data: { isOccupied: 1 },
+    //         where: { id: idTable },
+    //     })
+
+    //     const ingredients: {
+    //         id: number
+    //         qtyUsage: number
+    //         idTransactionCartDetail: number
+    //     }[] = []
+
+    //     let total = 0
+    //     newCart.transactionCartDetail.forEach((item) => {
+    //         total += item.menuQty * item.menu.price
+    //         item.menu.ingredients.forEach((v) => {
+    //             ingredients.push({
+    //                 id: v.ingredient.id,
+    //                 qtyUsage: v.qty * item.menuQty,
+    //                 idTransactionCartDetail: item.id,
+    //             })
+    //         })
+    //     })
+
+    //     await prisma.transactionCart.update({
+    //         where: {
+    //             id: newCart.id,
+    //         },
+    //     })
+
+    //     const ingredientHold: Prisma.IngredientHoldCreateManyInput[] =
+    //         ingredients.map((item) => ({
+    //             idCartDetail: item.idTransactionCartDetail,
+    //             idIngredient: item.id,
+    //             qty: item.qtyUsage,
+    //         }))
+
+    //     await prisma.ingredientHold.createMany({ data: ingredientHold })
+
+    //     return { success: "Item added to Cart!" }
+    // }
+
+    // deleteFromCart = async (idCartDetail: number) => {
+    //     const cartItem = await prisma.transactionCartDetail.findUniqueOrThrow({
+    //         where: { id: idCartDetail },
+    //         include: {
+    //             menu: {
+    //                 select: {
+    //                     price: true,
+    //                 },
+    //             },
+    //         },
+    //     })
+
+    //     const cart = await prisma.transactionCart.findUniqueOrThrow({
+    //         where: {
+    //             id: cartItem.idCart,
+    //         },
+    //     })
+
+    //     await prisma.transactionCart.update({
+    //         where: {
+    //             id: cartItem.idCart,
+    //         },
+    //         data: {
+    //             total: cart.total - cartItem.menuQty * cartItem.menu.price,
+    //         },
+    //     })
+
+    //     await prisma.ingredientHold.deleteMany({
+    //         where: {
+    //             idCartDetail: idCartDetail,
+    //         },
+    //     })
+
+    //     await prisma.transactionCartDetail.delete({
+    //         where: { id: idCartDetail },
+    //     })
+    //     return { success: "Removed Item from Cart" }
+    // }
 
     createTransactionCart = async (
         orderedMenus: TransactionCartDetail[],
@@ -264,6 +483,7 @@ export default class Transaction {
                 cashier: { connect: { id: idUser } },
                 transactionCartDetail: { create: details },
                 table: { connect: { id: idTable } },
+                paidStatus: 0,
             },
             include: {
                 transactionCartDetail: {
@@ -330,7 +550,60 @@ export default class Transaction {
 
         await prisma.ingredientHold.createMany({ data: ingredientHold })
 
-        return { success: "Transaction successfuly created!" }
+        return newCart
+    }
+
+    getPaymentToken = async (
+        idCart: string,
+        firstName: string,
+        email: string,
+        phone: string
+    ) => {
+        const cart = await this.getTransactionCartById(idCart)
+
+        // Create Snap API instance
+        let snap = new midtransClient.Snap({
+            // Set to true if you want Production Environment (accept real transaction).
+            isProduction: false,
+            serverKey: midtransServerKey,
+        })
+
+        let parameter = {
+            transaction_details: {
+                order_id: cart.id,
+                gross_amount: cart.total,
+            },
+            credit_card: {
+                secure: true,
+            },
+            customer_details: {
+                first_name: firstName,
+                email: email,
+                phone: phone,
+            },
+            item_details: cart.transactionCartDetail.map((item) => ({
+                name: item.menu.name,
+                quantity: item.menuQty,
+                price: item.menu.price,
+            })),
+            gopay: {
+                enable_callback: true,
+            },
+        }
+
+        let token = ""
+        await snap.createTransaction(parameter).then((transaction: any) => {
+            let transactionToken: string = transaction.token
+            token = transactionToken
+        })
+
+        if (token !== "") {
+            return {
+                token: token,
+            }
+        } else {
+            throw new ErrorResponse()
+        }
     }
 
     finishTransactionCart = async (paid: number, cart: TransactionCart) => {
@@ -351,6 +624,8 @@ export default class Transaction {
         const transaction: Prisma.TransactionCreateInput = {
             paid: paid,
             total: cart.total,
+            idOrder: cart.id,
+            paymentType: transactionCart.paymentType,
             cashier: { connect: { id: transactionCart.idUser } },
             detail: {
                 create: transactionCart.transactionCartDetail.map((item) => ({
@@ -420,7 +695,34 @@ export default class Transaction {
             data: transaction,
         })
 
-        return { transactionId: res.id }
+        return { transactionId: res.idOrder }
+    }
+
+    payCart = async (idCart: string, paymentType: string) => {
+        const transactionCart = await prisma.transactionCart.findUniqueOrThrow({
+            include: {
+                transactionCartDetail: {
+                    select: {
+                        id: true,
+                        IngredientHold: true,
+                        menuQty: true,
+                        idMenu: true,
+                    },
+                },
+            },
+            where: { id: idCart },
+        })
+
+        await prisma.transactionCart.update({
+            data: {
+                paid: transactionCart.total,
+                paymentType: paymentType,
+                paidStatus: 1,
+            },
+            where: { id: idCart },
+        })
+
+        return { transactionId: idCart }
     }
 
     // cancelTransactionCart = async (id: number) => {

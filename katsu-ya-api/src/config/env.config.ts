@@ -7,7 +7,8 @@ if (
     !process.env.SECRET_KEY ||
     !process.env.SALT_NUMBER ||
     !process.env.APP_MODE ||
-    !process.env.TOKEN_EXPIRED_TIME
+    !process.env.TOKEN_EXPIRED_TIME ||
+    !process.env.MIDTRANS_SERVER_KEY
 ) {
     throw new Error("Invalid env vars")
 }
@@ -18,8 +19,17 @@ const secret: string = process.env.SECRET_KEY
 const salt: number = parseInt(process.env.SALT_NUMBER)
 const appMode: string = process.env.APP_MODE
 const tokenExpiredTime: number = parseInt(process.env.TOKEN_EXPIRED_TIME)
+const midtransServerKey: string = process.env.MIDTRANS_SERVER_KEY
 
-export { hostname, port, secret, salt, appMode, tokenExpiredTime }
+export {
+    hostname,
+    port,
+    secret,
+    salt,
+    appMode,
+    tokenExpiredTime,
+    midtransServerKey,
+}
 
 export const Roles = {
     admin: "ADMIN",

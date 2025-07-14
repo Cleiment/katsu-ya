@@ -1,69 +1,28 @@
 <!-- eslint-disable vue/multi-word-component-names -->
-
 <script lang="ts" setup>
-// import {
-//     CheckIcon,
-//     ChevronUpDownIcon,
-//     ChevronDownIcon,
-//     ChevronLeftIcon,
-//     ChevronRightIcon
-// } from '@heroicons/vue/20/solid'
-
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { useAppStore } from '@/stores/AppStore'
 import { useTransactionStore } from '@/stores/TransactionStore'
-import BreadCrumbs from '@/components/BreadCrumbs.vue'
 
-import { modalSize } from '@/tools/types'
-import FormModal from '@/components/FormModal.vue'
-import Modal from '@/components/Modal.vue'
-import { useMenuStore } from '@/stores/MenuStore'
-import OrderForm from '@/components/forms/OrderForm.vue'
-import ConfirmationModal from '@/components/ConfirmationModal.vue'
 import { formatMoney, timestampToDatetime } from '@/tools'
 import { useAuthStore } from '@/stores/AuthStore'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const router = useRouter()
-
-const appStore = useAppStore()
 const authStore = useAuthStore()
+const appStore = useAppStore()
 const transactionStore = useTransactionStore()
-const menuStore = useMenuStore()
-
-const { getAll, createTransaction } = transactionStore
-
-const isPlaceOrderOpen = ref(false)
-const submitCreateTransaction = async () => {
-    appStore.isLoading = true
-    if (transactionStore.newTransaction.transactionCartDetail.length > 0) {
-        if (await createTransaction()) {
-            await getAll()
-        }
-    } else {
-        appStore.addNotification('error', 'Insert more menu to order before placing order!')
-    }
-    appStore.isLoading = false
-}
 
 const refresh = async () => {
     appStore.isLoading = true
-    await getAll()
     appStore.isLoading = false
 }
 
-const total = () => {
-    let total = 0
-    transactionStore.selectedStrukTransaction.detail.forEach((item) => {
-        total += item.menu.price * item.menuQty
-    })
-    return total
-}
-
 onMounted(async () => {
-    await transactionStore.getTransaction(parseInt(route.params.id.toString()))
+    await transactionStore.getReceipt(route.params.id.toString())
     await refresh()
+
+    if (authStore.role?.role == 'GUEST') appStore.isUsingSidebar = false
 })
 
 appStore.isLoading = false
@@ -89,17 +48,22 @@ appStore.isLoading = false
                 </p>
                 <p class="text-sm">
                     Cashier Name :
-                    {{ transactionStore.selectedStrukTransaction.cashier.username }}
+                    {{ transactionStore.selectedStrukTransaction.cashier?.username }}
                 </p>
                 <p class="text-sm">
                     Date :
                     {{ timestampToDatetime(transactionStore.selectedStrukTransaction.updatedAt) }}
                 </p>
+                <p class="text-sm">
+                    Payment Type :
+                    {{ transactionStore.selectedStrukTransaction.paymentType }}
+                </p>
             </div>
             <div>
                 <div
                     class="py-1 flex justify-between items-start border-b border-gray-200 mb-1"
-                    v-for="(item, i) in transactionStore.selectedStrukTransaction.detail"
+                    v-for="(item, i) in transactionStore.selectedStrukTransaction.detail ||
+                    transactionStore.selectedStrukTransaction.transactionCartDetail"
                     :key="i"
                 >
                     <p class="text-sm">{{ item.menu.name }} x{{ item.menuQty }}</p>

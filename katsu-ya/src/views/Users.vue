@@ -135,9 +135,7 @@ appStore.isLoading = false
             <BreadCrumbs />
         </div>
     </div>
-    <div
-        class="lg:h-[88%] md:h-[83%] h-[81%] shadow-lg rounded-md w-full border-t-4 border-rose-500 bg-white px-4 py-4"
-    >
+    <div class="grow shadow-lg rounded-md w-full border-t-4 border-rose-500 bg-white px-4 py-4">
         <div class="flex justify-end">
             <button
                 class="rounded-md px-4 py-2 text-sm font-medium bg-slate-700 text-white transition-all duration-300 hover:shadow-lg hover:bg-slate-800 focus-visible:ring-amber-500"

@@ -41,7 +41,7 @@ button:focus-visible {
 body {
     overflow: hidden;
     max-width: 100vw;
-    max-height: 100vh;
+    height: 100dvh;
 }
 
 @layer base {
@@ -71,6 +71,10 @@ body {
 }
 
 @layer components {
+    #app {
+        @apply h-full;
+    }
+
     .sidebar-menu {
         @apply text-sm;
         @apply transition-all duration-300 ease-out overflow-hidden text-ellipsis hover:shadow-xl;
@@ -163,7 +167,7 @@ body {
 
 .notif {
     @apply bg-gray-200 text-gray-900 border-s-4 border-gray-800 shadow-lg;
-    @apply px-5 py-3 w-[25rem] rounded;
+    @apply px-5 py-3 w-full md:w-[25rem] rounded;
     transition: all 300ms ease-out;
 }
 
@@ -187,11 +191,11 @@ body {
     @apply transition-colors duration-300;
     @apply w-10 h-10;
     @apply flex items-center justify-center;
-    @apply border rounded hover:border-orange-400;
+    @apply text-gray-600 rounded border border-slate-200 hover:border-orange-400;
 }
 
 .menu:disabled {
-    @apply bg-gray-200 border-none;
+    @apply bg-gray-200 border-none text-gray-400;
 }
 
 .menu.active {

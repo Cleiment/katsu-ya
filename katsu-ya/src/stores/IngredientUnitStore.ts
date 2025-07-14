@@ -26,7 +26,7 @@ export const useIngredientUnitStore = defineStore('ingredientUnit', () => {
     const selectedIngredientUnit: IngredientUnit = newIngredientUnit
 
     const getAll = async () => {
-        const url = import.meta.env.VITE_API_URL + '/ingredient/unit'
+        const url = import.meta.env.VITE_API_URL + '/ingredient/unit/all'
         const rs = await appStore.get<IngredientUnit[]>(url)
         if (
             rs &&

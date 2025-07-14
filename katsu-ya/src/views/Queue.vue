@@ -1,36 +1,17 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 
 <script lang="ts" setup>
-// import {
-//     CheckIcon,
-//     ChevronUpDownIcon,
-//     ChevronDownIcon,
-//     ChevronLeftIcon,
-//     ChevronRightIcon
-// } from '@heroicons/vue/20/solid'
-
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { useAppStore } from '@/stores/AppStore'
 import { useTransactionStore } from '@/stores/TransactionStore'
 import BreadCrumbs from '@/components/BreadCrumbs.vue'
 
-import { modalSize } from '@/tools/types'
-import FormModal from '@/components/FormModal.vue'
-import Modal from '@/components/Modal.vue'
-import { useMenuStore } from '@/stores/MenuStore'
-import OrderForm from '@/components/forms/OrderForm.vue'
-import ConfirmationModal from '@/components/ConfirmationModal.vue'
 import { socket, timestampToDatetime } from '@/tools'
-import { useAuthStore } from '@/stores/AuthStore'
 
 const appStore = useAppStore()
-const authStore = useAuthStore()
 const transactionStore = useTransactionStore()
-const menuStore = useMenuStore()
 
 const { getOrders } = transactionStore
-
-const isPlaceOrderOpen = ref(false)
 
 const refresh = async () => {
     appStore.isLoading = true
@@ -43,7 +24,6 @@ onMounted(async () => {
 })
 
 socket.on('refreshOrder', async (msg) => {
-    appStore.addNotification('info', msg)
     refresh()
 })
 
@@ -52,7 +32,7 @@ appStore.isLoading = false
 <style scoped></style>
 
 <template>
-    <div class="flex justify-between items-end mb-3">
+    <div class="flex justify-between items-center mb-3">
         <div>
             <h2 class="font-bold mb-1">Queue</h2>
             <BreadCrumbs />
@@ -97,6 +77,9 @@ appStore.isLoading = false
                     </table>
                 </div>
             </div>
+        </template>
+        <template v-else>
+            <div class="flex justify-center col-span-full text-gray-500">No Ongoing Order</div>
         </template>
     </div>
 </template>

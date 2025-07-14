@@ -143,9 +143,7 @@ appStore.isLoading = false
             </router-link>
         </div>
     </div>
-    <div
-        class="lg:h-[88%] md:h-[83%] h-[81%] shadow-lg rounded-md w-full border-t-4 border-rose-500 bg-white px-4 py-4"
-    >
+    <div class="grow shadow-lg rounded-md w-full border-t-4 border-rose-500 bg-white px-4 py-4">
         <div class="flex justify-end">
             <button
                 class="rounded-md px-4 py-2 text-sm font-medium bg-slate-700 text-white transition-all duration-300 hover:shadow-lg hover:bg-slate-800 focus-visible:ring-amber-500"
@@ -153,77 +151,6 @@ appStore.isLoading = false
             >
                 Create Ingredient Transaction
             </button>
-            <!-- <div class="flex gap-2 h-fit">
-                <Menu as="div" class="relative">
-                    <div>
-                        <MenuButton
-                            class="inline-flex w-full items-center justify-center rounded-md bg-orange-400/90 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-orange-400 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
-                        >
-                            Options
-
-                            <ChevronDownIcon class="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
-                        </MenuButton>
-                    </div>
-
-                    <transition
-                        enter-active-class="transition duration-100 ease-out"
-                        enter-from-class="transform scale-95 opacity-0"
-                        enter-to-class="transform scale-100 opacity-100"
-                        leave-active-class="transition duration-75 ease-in"
-                        leave-from-class="transform scale-100 opacity-100"
-                        leave-to-class="transform scale-95 opacity-0"
-                    >
-                        <MenuItems
-                            class="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none z-50"
-                        >
-                            <div class="px-1 py-1">
-                                <MenuItem v-slot="{ active }">
-                                    <button
-                                        :class="[
-                                            active ? 'bg-orange-400 text-white' : 'text-gray-900',
-                                            'group flex w-full items-center rounded-md px-2 py-2 text-sm'
-                                        ]"
-                                    >
-                                        Extract
-                                    </button>
-                                </MenuItem>
-                                <MenuItem v-slot="{ active }">
-                                    <button
-                                        :class="[
-                                            active ? 'bg-orange-400 text-white' : 'text-gray-900',
-                                            'group flex w-full items-center rounded-md px-2 py-2 text-sm'
-                                        ]"
-                                    >
-                                        Deactivate
-                                    </button>
-                                </MenuItem>
-                            </div>
-                            <div class="px-1 py-1">
-                                <MenuItem v-slot="{ active }">
-                                    <button
-                                        :class="[
-                                            active ? 'bg-orange-500 text-white' : 'text-gray-900',
-                                            'group flex w-full items-center rounded-md px-2 py-2 text-sm'
-                                        ]"
-                                    >
-                                        Archive
-                                    </button>
-                                </MenuItem>
-                                <MenuItem v-slot="{ active }">
-                                    <button
-                                        :class="[
-                                            active ? 'bg-orange-500 text-white' : 'text-gray-900',
-                                            'group flex w-full items-center rounded-md px-2 py-2 text-sm'
-                                        ]"
-                                    >
-                                        Move
-                                    </button>
-                                </MenuItem>
-                            </div>
-                        </MenuItems>
-                    </transition>
-                </Menu>
-            </div> -->
         </div>
         <div class="overflow-y-auto h-fit max-h-[95%] my-4 transition-all duration-300 ease-out">
             <IngredientTransactionTable @show-detail="openDetailModal" />

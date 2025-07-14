@@ -13,129 +13,164 @@ import Queue from '@/views/Queue.vue'
 import TablesOrder from '@/views/TablesOrder.vue'
 import StrukPenjualan from '@/components/exports/StrukPenjualan.vue'
 import Report from '@/views/Report.vue'
+import Category from '@/views/Category.vue'
+import type { RouterRoutes } from '@/tools/types'
+import OrderFromTable from '@/views/OrderFromTable.vue'
+import ShowOrder from '@/views/ShowOrder.vue'
+import PaymentSuccess from '@/views/PaymentSuccess.vue'
+
+const routes: Readonly<RouterRoutes>[] = [
+    {
+        path: '/',
+        name: 'Main',
+        component: () => {},
+        meta: {
+            requiresAuth: true
+        }
+    },
+    { path: '/login', component: Login, name: 'Login' },
+    {
+        path: '/user',
+        component: Users,
+        name: 'User',
+        meta: {
+            requiresAuth: true,
+            role: [1],
+            breadcrumb: 'Users'
+        }
+    },
+    {
+        path: '/ingredient',
+        component: Ingredients,
+        name: 'Ingredient',
+        children: [],
+        meta: {
+            requiresAuth: true,
+            role: [1, 2],
+            breadcrumb: 'Ingredients'
+        }
+    },
+    {
+        path: '/ingredient-transaction',
+        component: IngredientTransactions,
+        name: 'IngredientTransaction',
+        meta: {
+            requiresAuth: true,
+            role: [2],
+            breadcrumb: 'Ingredient Transactions'
+        }
+    },
+    {
+        path: '/ingredient-unit',
+        component: IngredientUnits,
+        name: 'IngredientUnit',
+        meta: {
+            requiresAuth: true,
+            role: [1, 2],
+            breadcrumb: 'Ingredient Units'
+        }
+    },
+    {
+        path: '/category',
+        component: Category,
+        name: 'Category',
+        meta: {
+            requiresAuth: true,
+            role: [2],
+            breadcrumb: 'Category'
+        }
+    },
+    {
+        path: '/menu',
+        component: Menus,
+        name: 'Menu',
+        meta: {
+            requiresAuth: true,
+            role: [1, 2],
+            breadcrumb: 'Menus'
+        }
+    },
+    {
+        path: '/new-transaction',
+        component: NewTransaction,
+        name: 'NewTransaction',
+        meta: {
+            requiresAuth: true,
+            role: [3],
+            breadcrumb: 'New Transaction'
+        }
+    },
+    {
+        path: '/queue',
+        component: Queue,
+        name: 'Queue',
+        meta: {
+            requiresAuth: true,
+            role: [3, 4],
+            breadcrumb: 'Queue'
+        }
+    },
+    {
+        path: '/table',
+        component: TablesOrder,
+        name: 'TableOrder',
+        meta: {
+            requiresAuth: true,
+            role: [3, 4],
+            breadcrumb: "Table's Order"
+        }
+    },
+    {
+        path: '/struk/:id',
+        component: StrukPenjualan,
+        name: 'StrukPenjualan',
+        meta: {
+            breadcrumb: 'Struk Penjualan'
+        }
+    },
+    {
+        path: '/report',
+        component: Report,
+        name: 'Report',
+        meta: {
+            requiresAuth: true,
+            role: [2, 3, 4],
+            breadcrumb: 'Report'
+        }
+    },
+    {
+        path: '/order',
+        component: OrderFromTable,
+        name: 'Order'
+    },
+    {
+        path: '/order/all',
+        component: ShowOrder,
+        name: 'AllOrder'
+    },
+    {
+        path: '/order/:id/payment-success',
+        component: PaymentSuccess,
+        name: 'PaymentSuccess'
+    },
+    // {
+    //     path: '/order/:id',
+    //     component: ShowOrderDetail,
+    //     name: 'OrderDetail'
+    // },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: NotFound
+        // meta: {
+        //     requiresAuth: true
+        // }
+    }
+]
 
 const router = createRouter({
     history: createWebHistory(),
-    routes: [
-        {
-            path: '/',
-            name: 'Main',
-            component: () => {},
-            meta: {
-                requiresAuth: true
-            }
-        },
-        { path: '/login', component: Login, name: 'Login' },
-        {
-            path: '/user',
-            component: Users,
-            name: 'User',
-            meta: {
-                requiresAuth: true,
-                role: [1],
-                breadcrumb: 'Users'
-            }
-        },
-        {
-            path: '/ingredient',
-            component: Ingredients,
-            name: 'Ingredient',
-            children: [],
-            meta: {
-                requiresAuth: true,
-                role: [1, 2],
-                breadcrumb: 'Ingredients'
-            }
-        },
-        {
-            path: '/ingredient-transaction',
-            component: IngredientTransactions,
-            name: 'IngredientTransaction',
-            meta: {
-                requiresAuth: true,
-                role: [2],
-                breadcrumb: 'Ingredient Transactions'
-            }
-        },
-        {
-            path: '/ingredient-unit',
-            component: IngredientUnits,
-            name: 'IngredientUnit',
-            meta: {
-                requiresAuth: true,
-                role: [1, 2],
-                breadcrumb: 'Ingredient Units'
-            }
-        },
-        {
-            path: '/menu',
-            component: Menus,
-            name: 'Menu',
-            meta: {
-                requiresAuth: true,
-                role: [1, 2],
-                breadcrumb: 'Menus'
-            }
-        },
-        {
-            path: '/new-transaction',
-            component: NewTransaction,
-            name: 'NewTransaction',
-            meta: {
-                requiresAuth: true,
-                role: [3],
-                breadcrumb: 'New Transaction'
-            }
-        },
-        {
-            path: '/queue',
-            component: Queue,
-            name: 'Queue',
-            meta: {
-                requiresAuth: true,
-                role: [3, 4],
-                breadcrumb: 'Queue'
-            }
-        },
-        {
-            path: '/table',
-            component: TablesOrder,
-            name: 'TableOrder',
-            meta: {
-                requiresAuth: true,
-                role: [3, 4],
-                breadcrumb: "Table's Order"
-            }
-        },
-        {
-            path: '/struk/:id',
-            component: StrukPenjualan,
-            name: 'StrukPenjualan',
-            meta: {
-                requiresAuth: true,
-                role: [2, 3, 4],
-                breadcrumb: 'Struk Penjualan'
-            }
-        },
-        {
-            path: '/report',
-            component: Report,
-            name: 'Report',
-            meta: {
-                requiresAuth: true,
-                role: [2, 3, 4],
-                breadcrumb: 'Report'
-            }
-        },
-        {
-            path: '/:pathMatch(.*)*',
-            name: 'NotFound',
-            component: NotFound,
-            meta: {
-                requiresAuth: true
-            }
-        }
-    ]
+    routes: routes
 })
 
 router.beforeEach(async (to, from, next) => {

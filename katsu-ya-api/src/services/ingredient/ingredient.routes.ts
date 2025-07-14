@@ -1,5 +1,5 @@
-import { Router } from "express"
-import { validate } from "../../tools/validate"
+import { Router, json } from "express"
+import { booleanFromString, validate } from "../../tools/validate"
 import { requestHandler } from "../../tools/handler"
 import Ingredient from "./ingredient.controller"
 import { User } from "@prisma/client"
@@ -8,11 +8,32 @@ import { Roles } from "../../config/env.config"
 const router = Router()
 const ingredient = new Ingredient()
 
+router.use(json())
+
 router.get(
     "/",
     requestHandler(
         async (req, res) => {
-            const rs = await ingredient.getIngredients()
+            const page = parseInt(req.query.page as string) || 1
+            const limit = parseInt(req.query.limit as string) || 10
+            const showDeactivated =
+                booleanFromString(req.query.show_deactivated as string) || false
+
+            const rs = await ingredient.getIngredientByPage(
+                page,
+                limit,
+                showDeactivated
+            )
+            return rs
+        },
+        [Roles.admin, Roles.manager, Roles.cashier, Roles.kitchen]
+    )
+)
+router.get(
+    "/all",
+    requestHandler(
+        async (req, res) => {
+            const rs = await ingredient.getAllIngredient()
             return rs
         },
         [Roles.admin, Roles.manager, Roles.cashier, Roles.kitchen]
@@ -23,7 +44,21 @@ router.get(
     "/unit",
     requestHandler(
         async (req, res) => {
-            const rs = await ingredient.getIngredientUnits()
+            const page = parseInt(req.query.page as string) || 1
+            const limit = parseInt(req.query.limit as string) || 10
+
+            const rs = await ingredient.getIngredientUnitByPage(page, limit)
+            return rs
+        },
+        [Roles.admin, Roles.manager, Roles.cashier, Roles.kitchen]
+    )
+)
+
+router.get(
+    "/unit/all",
+    requestHandler(
+        async (req, res) => {
+            const rs = await ingredient.getAllIngredientUnit()
             return rs
         },
         [Roles.admin, Roles.manager, Roles.cashier, Roles.kitchen]

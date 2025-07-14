@@ -86,70 +86,70 @@ appStore.isLoading = false
             </div>
         </div>
     </div>
-    <div
-        class="lg:max-h-[88%] md:max-h-[83%] max-h-[81%] shadow-lg rounded-md w-full bg-white p-4"
-        v-if="transactionStore.dataReport"
-    >
-        <div class="h-fit">
-            <div class="flex justify-between pb-2 border-b mb-2 items-end">
-                <div>
-                    <p class="font-semibold mb-2">Transaction Report</p>
-                    <p class="text-sm mb-1">
-                        Date Start :
-                        {{ dateString(new Date(transactionStore.dataReport.startDate)) }}
-                    </p>
-                    <p class="text-sm mb-1">
-                        Date End : {{ dateString(new Date(transactionStore.dataReport.endDate)) }}
-                    </p>
+    <div class="h-full overflow-y-auto">
+        <div class="shadow-lg rounded-md w-full bg-white p-4" v-if="transactionStore.dataReport">
+            <div class="h-fit">
+                <div class="flex justify-between pb-2 border-b mb-2 items-end">
+                    <div>
+                        <p class="font-semibold mb-2">Transaction Report</p>
+                        <p class="text-sm mb-1">
+                            Date Start :
+                            {{ dateString(new Date(transactionStore.dataReport.startDate)) }}
+                        </p>
+                        <p class="text-sm mb-1">
+                            Date End :
+                            {{ dateString(new Date(transactionStore.dataReport.endDate)) }}
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <p class="font-semibold">Total</p>
+                        <p>
+                            {{
+                                formatMoney(
+                                    transactionStore.dataReport.transactionSummary._sum.total || 0,
+                                    true
+                                )
+                            }}
+                        </p>
+                    </div>
                 </div>
-                <div class="flex flex-col items-end">
-                    <p class="font-semibold">Total</p>
-                    <p>
-                        {{
-                            formatMoney(
-                                transactionStore.dataReport.transactionSummary._sum.total || 0,
-                                true
-                            )
-                        }}
-                    </p>
+                <div class="flex">
+                    <table class="table w-full font-normal table-auto relative">
+                        <thead class="sticky top-0 bg-white rounded border-b">
+                            <tr>
+                                <th class="font-semibold" width="20%">Menu</th>
+                                <th class="font-semibold" width="20%">Price</th>
+                                <th class="font-semibold" width="20%">Sold</th>
+                                <th class="font-semibold" width="20%">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr
+                                v-for="(v, i) in transactionStore.dataReport.menuSummary"
+                                :key="i"
+                                class="border-b hover:bg-rose-400/20"
+                            >
+                                <td class="py-1">
+                                    {{ v.name }}
+                                </td>
+                                <td>
+                                    {{ formatMoney(v.price) }}
+                                </td>
+                                <td>
+                                    {{ formatMoney(v.totalQty) }}
+                                </td>
+                                <td>
+                                    {{ formatMoney(v.price * v.totalQty) }}
+                                </td>
+                            </tr>
+                            <tr v-if="transactionStore.dataReport.menuSummary.length < 1">
+                                <td class="py-1 border-b hover:bg-rose-400/20" colspan="4">
+                                    <p class="text-gray-400 text-center">Data Not Found</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <div class="flex">
-                <table class="table w-full font-normal table-auto relative">
-                    <thead class="sticky top-0 bg-white rounded border-b">
-                        <tr>
-                            <th class="font-semibold" width="20%">Menu</th>
-                            <th class="font-semibold" width="20%">Price</th>
-                            <th class="font-semibold" width="20%">Sold</th>
-                            <th class="font-semibold" width="20%">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-sm">
-                        <tr
-                            v-for="(v, i) in transactionStore.dataReport.menuSummary"
-                            :key="i"
-                            class="border-b hover:bg-rose-400/20"
-                        >
-                            <td class="py-1">
-                                {{ v.name }}
-                            </td>
-                            <td>
-                                {{ formatMoney(v.price) }}
-                            </td>
-                            <td>
-                                {{ formatMoney(v.totalQty) }}
-                            </td>
-                            <td>
-                                {{ formatMoney(v.price * v.totalQty) }}
-                            </td>
-                        </tr>
-                        <tr v-if="transactionStore.dataReport.menuSummary.length < 1">
-                            <td class="py-1 border-b hover:bg-rose-400/20" colspan="4">
-                                <p class="text-gray-400 text-center">Data Not Found</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAppStore } from '@/stores/AppStore'
 import { useMenuStore } from '@/stores/MenuStore'
-import { formatMoney, timestampToDatetime } from '@/tools'
+import { formatMoney, image, placeholder } from '@/tools'
 import { InformationCircleIcon, PlusIcon } from '@heroicons/vue/24/solid'
 
 const appStore = useAppStore()
@@ -54,12 +54,13 @@ const addToOrder = (id: string) => {
     >
         <thead class="sticky top-0 shadow bg-white rounded">
             <tr>
-                <th class="font-semibold text-center px-3 py-2" width="5%">No</th>
+                <th class="font-semibold text-center px-3 py-2" width="3%">No</th>
+                <th class="font-semibold text-center" width="10%">Picture</th>
                 <th class="font-semibold" width="20%">Name</th>
-                <th class="font-semibold" width="10%">Price</th>
-                <th class="font-semibold text-center" width="10%">Ingredients</th>
-                <th class="font-semibold" width="10%">Created At</th>
-                <th class="font-semibold" width="10%">Updated At</th>
+                <th class="font-semibold text-center" width="5%">Category</th>
+                <th class="font-semibold" width="5%">Price</th>
+                <th class="font-semibold text-center" width="5%">Ingredients</th>
+                <th class="font-semibold" width="20%">Description</th>
                 <th class="font-semibold text-center" width="10%">Action</th>
             </tr>
         </thead>
@@ -69,19 +70,34 @@ const addToOrder = (id: string) => {
                 :key="menu.id"
                 class="border-b"
                 :class="
-                    menu.status == 0 ||
-                    menu.ingredients!.some(
-                        (item) => item.ingredient.status == 0 || item.ingredient.qty < item.qty
-                    )
-                        ? 'bg-red-500/80 text-white hover:bg-red-500'
-                        : 'hover:bg-rose-400/20'
+                    menu.status == 0
+                        ? 'bg-red-500 text-white'
+                        : menu.ingredients!.some((item) => item.ingredient.qty < item.qty)
+                          ? 'bg-amber-400/80 text-white hover:bg-amber-400'
+                          : 'hover:bg-rose-400/20'
                 "
             >
-                <td class="px-3 py-4 text-center">{{ i + 1 }}</td>
+                <td class="px-3 py-4 text-center">{{ i + 1 + menuStore.offset }}</td>
+                <td>
+                    <div class="w-full flex">
+                        <div
+                            class="bg-gray-300 h-28 w-28 m-auto my-2 rounded-lg overflow-hidden shadow-sm ring-1 ring-gray-200"
+                        >
+                            <img
+                                :src="image + 'menu-image/' + menu.picture || placeholder"
+                                alt=""
+                                class="w-full h-full object-cover"
+                            />
+                        </div>
+                    </div>
+                </td>
                 <td>
                     <span class="hover:text-slate-600 cursor-pointer" @click="copy(menu.name)">{{
                         menu.name
                     }}</span>
+                </td>
+                <td class="text-center">
+                    {{ menu.category?.name || 'Menu' }}
                 </td>
                 <td class="px-3 py-4">{{ formatMoney(menu.price) }}</td>
 
@@ -94,9 +110,8 @@ const addToOrder = (id: string) => {
                     </button>
                 </td>
                 <td>
-                    {{ timestampToDatetime(menu.createdAt) }}
+                    {{ menu.desc }}
                 </td>
-                <td>{{ timestampToDatetime(menu.updatedAt) }}</td>
                 <td class="text-center">
                     <button
                         class="rounded-full p-1 bg-blue-500 text-white"
