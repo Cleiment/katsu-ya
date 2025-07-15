@@ -1,0 +1,243 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model UserRole {
+    id     Int    @id @default(autoincrement())
+    role   String @db.VarChar(100)
+    status Int    @default(1) @db.TinyInt
+
+    user User[]
+
+    @@index([status])
+    @@map("user_role")
+}
+
+model Table {
+    id              Int               @id @default(autoincrement())
+    tableName       String            @map("table_name")
+    isOccupied      Int               @default(0) @map("is_occupied") @db.TinyInt
+    updatedAt       DateTime          @default(now()) @updatedAt @map("updated_at")
+    TransactionCart TransactionCart[]
+}
+
+model User {
+    id        String   @id @default(cuid())
+    username  String   @unique @db.VarChar(100)
+    password  String   @db.Char(60)
+    idRole    Int      @default(5) @map("id_role")
+    status    Int      @default(1) @db.TinyInt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    userRole UserRole @relation(fields: [idRole], references: [id])
+
+    ingredientTransaction IngredientTransaction[]
+    transaction           Transaction[]
+    TransactionCart       TransactionCart[]
+
+    @@index([username])
+    @@index([idRole])
+    @@index([status])
+}
+
+model MenuCategory {
+    id        Int      @id @default(autoincrement())
+    name      String
+    status    Int      @default(1) @db.TinyInt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+    menus Menu[]
+
+    @@index([name])
+    @@map("menu_category")
+}
+
+model Menu {
+    id         String   @id @default(cuid())
+    name       String
+    price      Int
+    status     Int      @default(1) @db.TinyInt
+    picture    String   @default("")
+    desc       String   @default("") @db.Text
+    idCategory Int?
+    createdAt  DateTime @default(now()) @map("created_at")
+    updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+    ingredients           MenuIngredient[]
+    transactionDetail     TransactionDetail[]
+    TransactionCartDetail TransactionCartDetail[]
+    category              MenuCategory?           @relation(fields: [idCategory], references: [id])
+
+    @@index([status])
+    @@index([idCategory])
+}
+
+model MenuIngredient {
+    id           Int      @id @default(autoincrement())
+    idMenu       String   @map("id_menu")
+    idIngredient Int      @map("id_ingredient")
+    qty          Int
+    createdAt    DateTime @default(now()) @map("created_at")
+    updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+    menu       Menu       @relation(fields: [idMenu], references: [id])
+    ingredient Ingredient @relation(fields: [idIngredient], references: [id])
+
+    @@unique([idMenu, idIngredient])
+    @@index([idMenu])
+    @@index([idIngredient])
+    @@map("menu_ingredient")
+}
+
+model IngredientUnit {
+    id        Int      @id @default(autoincrement())
+    name      String
+    status    Int      @default(1) @db.TinyInt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+    ingredients Ingredient[]
+
+    @@map("ingredient_unit")
+}
+
+model Ingredient {
+    id        Int      @id @default(autoincrement())
+    name      String
+    qty       Int
+    idUnit    Int      @map("id_unit")
+    status    Int      @default(1) @db.TinyInt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+    unit IngredientUnit @relation(fields: [idUnit], references: [id])
+
+    menus          MenuIngredient[]
+    transactions   IngredientTransaction[]
+    IngredientHold IngredientHold[]
+
+    @@index([status])
+    @@index([idUnit])
+}
+
+model IngredientTransaction {
+    id                  Int      @id @default(autoincrement())
+    idTransactionDetail Int?     @map("id_transaction_detail")
+    idIngredient        Int      @map("id_ingredient")
+    qty                 Int
+    isUsage             Int      @default(0) @map("is_usage") @db.TinyInt
+    idUser              String   @map("id_user")
+    createdAt           DateTime @default(now()) @map("created_at")
+    updatedAt           DateTime @default(now()) @updatedAt @map("updated_at")
+
+    stockUsage TransactionDetail? @relation(fields: [idTransactionDetail], references: [id])
+    ingredient Ingredient         @relation(fields: [idIngredient], references: [id])
+    user       User               @relation(fields: [idUser], references: [id])
+
+    @@index([idTransactionDetail])
+    @@index([idIngredient])
+    @@index([idUser])
+    @@index([updatedAt])
+    @@map("ingredient_transaction")
+}
+
+model IngredientHold {
+    id           Int      @id @default(autoincrement())
+    idCartDetail Int      @map("id_transaction_cart_detail")
+    idIngredient Int      @map("id_ingredient")
+    qty          Int
+    createdAt    DateTime @default(now()) @map("created_at")
+    updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+    transactionCartDetail TransactionCartDetail @relation(fields: [idCartDetail], references: [id])
+    ingredient            Ingredient            @relation(fields: [idIngredient], references: [id])
+
+    @@index([idCartDetail])
+    @@index([idIngredient])
+    @@index([updatedAt])
+    @@map("ingredient_holding")
+}
+
+model TransactionCart {
+    id          String @id @default(cuid())
+    total       Int    @default(0)
+    idTable     Int    @map("id_table")
+    idUser      String @map("id_user")
+    paid        Int    @default(0)
+    paymentType String @default("cash") @map("payment_type")
+    paidStatus  Int    @default(0) @db.TinyInt
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+    cashier               User                    @relation(fields: [idUser], references: [id])
+    table                 Table                   @relation(fields: [idTable], references: [id])
+    transactionCartDetail TransactionCartDetail[]
+
+    @@index([idTable])
+    @@index([idUser])
+    @@map("transaction_cart")
+}
+
+model TransactionCartDetail {
+    id        Int      @id @default(autoincrement())
+    idCart    String   @map("id_transaction_cart")
+    idMenu    String   @map("id_menu")
+    menuQty   Int      @map("menu_qty")
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+    menu           Menu             @relation(fields: [idMenu], references: [id])
+    cart           TransactionCart  @relation(fields: [idCart], references: [id])
+    IngredientHold IngredientHold[]
+
+    @@index([idCart])
+    @@index([idMenu])
+    @@map("transaction_cart_detail")
+}
+
+model Transaction {
+    id          Int      @id @default(autoincrement())
+    idOrder     String   @unique @default(cuid()) @map("id_order")
+    total       Int      @default(0)
+    paid        Int      @default(0)
+    paymentType String   @default("cash") @map("payment_type")
+    idUser      String   @map("id_user")
+    createdAt   DateTime @default(now()) @map("created_at")
+    updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+    cashier User                @relation(fields: [idUser], references: [id])
+    detail  TransactionDetail[]
+
+    @@map("transaction")
+}
+
+model TransactionDetail {
+    id            Int      @id @default(autoincrement())
+    idTransaction Int      @map("id_transaction")
+    idMenu        String   @map("id_menu")
+    menuQty       Int      @map("menu_qty")
+    createdAt     DateTime @default(now()) @map("created_at")
+    updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+
+    menu                  Menu                    @relation(fields: [idMenu], references: [id])
+    transaction           Transaction             @relation(fields: [idTransaction], references: [id])
+    ingredientTransaction IngredientTransaction[]
+
+    @@index([idMenu])
+    @@index([idTransaction])
+    @@map("transaction_detail")
+}
