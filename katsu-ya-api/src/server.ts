@@ -1,11 +1,12 @@
 import app from "./routes"
 import { Server } from "socket.io"
 import { createServer } from "node:http"
+import { clientUrl } from "./config/env.config"
 
 export const server = createServer(app)
 export const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: clientUrl || "http://localhost:5173",
         methods: ["GET", "POST"],
     },
 })

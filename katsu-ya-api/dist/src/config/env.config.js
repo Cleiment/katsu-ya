@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Roles = exports.midtransServerKey = exports.tokenExpiredTime = exports.appMode = exports.salt = exports.secret = exports.port = exports.hostname = void 0;
+exports.Roles = exports.clientUrl = exports.midtransServerKey = exports.tokenExpiredTime = exports.appMode = exports.salt = exports.secret = exports.port = exports.hostname = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 if (!process.env.HOSTNAME ||
@@ -12,7 +12,8 @@ if (!process.env.HOSTNAME ||
     !process.env.SALT_NUMBER ||
     !process.env.APP_MODE ||
     !process.env.TOKEN_EXPIRED_TIME ||
-    !process.env.MIDTRANS_SERVER_KEY) {
+    !process.env.MIDTRANS_SERVER_KEY ||
+    !process.env.CLIENT_URL) {
     throw new Error("Invalid env vars");
 }
 const hostname = process.env.HOSTNAME;
@@ -29,6 +30,8 @@ const tokenExpiredTime = parseInt(process.env.TOKEN_EXPIRED_TIME);
 exports.tokenExpiredTime = tokenExpiredTime;
 const midtransServerKey = process.env.MIDTRANS_SERVER_KEY;
 exports.midtransServerKey = midtransServerKey;
+const clientUrl = process.env.CLIENT_URL;
+exports.clientUrl = clientUrl;
 exports.Roles = {
     admin: "ADMIN",
     manager: "MANAGER",

@@ -23,11 +23,11 @@ export default class Transaction {
         }>;
     }>;
     getTransactionById: (id: number) => Promise<{
-        cashier: {
-            username: string;
-        };
         _count: {
             detail: number;
+        };
+        cashier: {
+            username: string;
         };
         detail: {
             menuQty: number;
@@ -37,21 +37,21 @@ export default class Transaction {
             };
         }[];
     } & {
-        total: number;
         id: number;
         createdAt: Date;
         updatedAt: Date;
-        idUser: string;
+        total: number;
+        idOrder: string;
         paid: number;
         paymentType: string;
-        idOrder: string;
+        idUser: string;
     }>;
     getTransactionByIdOrder: (id: string) => Promise<({
-        cashier: {
-            username: string;
-        };
         _count: {
             detail: number;
+        };
+        cashier: {
+            username: string;
         };
         detail: {
             menuQty: number;
@@ -61,36 +61,36 @@ export default class Transaction {
             };
         }[];
     } & {
-        total: number;
         id: number;
         createdAt: Date;
         updatedAt: Date;
-        idUser: string;
+        total: number;
+        idOrder: string;
         paid: number;
         paymentType: string;
-        idOrder: string;
+        idUser: string;
     }) | ({
-        cashier: {
-            username: string;
-        };
-        _count: {
-            transactionCartDetail: number;
-        };
         transactionCartDetail: {
             menu: {
                 name: string;
                 price: number;
             };
         }[];
+        _count: {
+            transactionCartDetail: number;
+        };
+        cashier: {
+            username: string;
+        };
     } & {
-        total: number;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        idUser: string;
-        idTable: number;
+        total: number;
         paid: number;
         paymentType: string;
+        idUser: string;
+        idTable: number;
         paidStatus: number;
     })>;
     getAvailableTable: () => Promise<{
@@ -111,33 +111,33 @@ export default class Transaction {
                 menu: {
                     ingredients: {
                         id: number;
+                        idMenu: string;
                         createdAt: Date;
                         updatedAt: Date;
-                        qty: number;
                         idIngredient: number;
-                        idMenu: string;
+                        qty: number;
                     }[];
                 } & {
-                    status: number;
-                    id: string;
                     name: string;
+                    id: string;
                     createdAt: Date;
                     updatedAt: Date;
                     price: number;
+                    status: number;
                     picture: string;
                     desc: string;
                     idCategory: number | null;
                 };
             }[];
         } & {
-            total: number;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            idUser: string;
-            idTable: number;
+            total: number;
             paid: number;
             paymentType: string;
+            idUser: string;
+            idTable: number;
             paidStatus: number;
         })[];
     } & {
@@ -152,19 +152,19 @@ export default class Transaction {
             menu: {
                 ingredients: {
                     id: number;
+                    idMenu: string;
                     createdAt: Date;
                     updatedAt: Date;
-                    qty: number;
                     idIngredient: number;
-                    idMenu: string;
+                    qty: number;
                 }[];
             } & {
-                status: number;
-                id: string;
                 name: string;
+                id: string;
                 createdAt: Date;
                 updatedAt: Date;
                 price: number;
+                status: number;
                 picture: string;
                 desc: string;
                 idCategory: number | null;
@@ -174,26 +174,26 @@ export default class Transaction {
             tableName: string;
         };
     } & {
-        total: number;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        idUser: string;
-        idTable: number;
+        total: number;
         paid: number;
         paymentType: string;
+        idUser: string;
+        idTable: number;
         paidStatus: number;
     })[]>;
     getOrderByTable: (idTable: number) => Promise<({
         transactionCartDetail: {
             menuQty: number;
             menu: {
-                status: number;
-                id: string;
                 name: string;
+                id: string;
                 createdAt: Date;
                 updatedAt: Date;
                 price: number;
+                status: number;
                 picture: string;
                 desc: string;
                 idCategory: number | null;
@@ -203,23 +203,17 @@ export default class Transaction {
             tableName: string;
         };
     } & {
-        total: number;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        idUser: string;
-        idTable: number;
+        total: number;
         paid: number;
         paymentType: string;
+        idUser: string;
+        idTable: number;
         paidStatus: number;
     })[]>;
     getTransactionCartById: (id: string) => Promise<{
-        cashier: {
-            username: string;
-        };
-        _count: {
-            transactionCartDetail: number;
-        };
         transactionCartDetail: {
             id: number;
             menuQty: number;
@@ -228,19 +222,25 @@ export default class Transaction {
                 price: number;
             };
         }[];
+        _count: {
+            transactionCartDetail: number;
+        };
+        cashier: {
+            username: string;
+        };
         table: {
             id: number;
             tableName: string;
         };
     } & {
-        total: number;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        idUser: string;
-        idTable: number;
+        total: number;
         paid: number;
         paymentType: string;
+        idUser: string;
+        idTable: number;
         paidStatus: number;
     }>;
     createTransactionCart: (orderedMenus: TransactionCartDetail[], idUser: string, idTable: number) => Promise<{
@@ -249,32 +249,32 @@ export default class Transaction {
             menuQty: number;
             menu: {
                 ingredients: {
+                    qty: number;
                     ingredient: {
                         id: number;
                     };
-                    qty: number;
                 }[];
             } & {
-                status: number;
-                id: string;
                 name: string;
+                id: string;
                 createdAt: Date;
                 updatedAt: Date;
                 price: number;
+                status: number;
                 picture: string;
                 desc: string;
                 idCategory: number | null;
             };
         }[];
     } & {
-        total: number;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        idUser: string;
-        idTable: number;
+        total: number;
         paid: number;
         paymentType: string;
+        idUser: string;
+        idTable: number;
         paidStatus: number;
     }>;
     getPaymentToken: (idCart: string, firstName: string, email: string, phone: string) => Promise<{

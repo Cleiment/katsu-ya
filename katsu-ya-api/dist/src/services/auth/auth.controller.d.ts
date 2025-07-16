@@ -1,12 +1,12 @@
 export default class Auth {
     createToken: (id: string, username: string, idRole: number) => Promise<string>;
     checkToken: (token: string) => Promise<{
-        status: number;
         id: string;
+        status: number;
         username: string;
         userRole: {
-            role: string;
             id: number;
+            role: string;
         };
     }>;
     login: (username: string, password: string) => Promise<{

@@ -12,14 +12,14 @@ export default class User {
         success: string;
     }>;
     getUsers: () => Promise<{
-        status: number;
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        status: number;
         username: string;
         userRole: {
-            role: string;
             id: number;
+            role: string;
         };
     }[]>;
     getUserByUsername: (username: string) => Promise<{
@@ -29,12 +29,12 @@ export default class User {
         idRole: number;
     }>;
     getUserById: (id: string) => Promise<{
-        status: number;
         id: string;
+        status: number;
         username: string;
         userRole: {
-            role: string;
             id: number;
+            role: string;
         };
     }>;
     newUser: (username: string, password: string, idRole: number) => Promise<{

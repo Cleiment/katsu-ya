@@ -5,7 +5,8 @@ declare const salt: number;
 declare const appMode: string;
 declare const tokenExpiredTime: number;
 declare const midtransServerKey: string;
-export { hostname, port, secret, salt, appMode, tokenExpiredTime, midtransServerKey, };
+declare const clientUrl: string;
+export { hostname, port, secret, salt, appMode, tokenExpiredTime, midtransServerKey, clientUrl, };
 export declare const Roles: {
     admin: string;
     manager: string;
