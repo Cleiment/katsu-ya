@@ -1,5 +1,5 @@
 -- AlterTable
-ALTER TABLE `menu` ADD COLUMN `idCategory` INTEGER NULL;
+ALTER TABLE `Menu` ADD COLUMN `idCategory` INTEGER NULL;
 
 -- CreateTable
 CREATE TABLE `menu_category` (

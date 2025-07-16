@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `menu` ADD COLUMN `detail` TEXT NOT NULL DEFAULT '';
+ALTER TABLE `Menu` ADD COLUMN `detail` TEXT NOT NULL;

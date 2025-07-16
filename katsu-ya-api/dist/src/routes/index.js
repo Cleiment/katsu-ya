@@ -14,9 +14,10 @@ const transaction_routes_1 = __importDefault(require("../services/transaction/tr
 const handler_1 = require("../tools/handler");
 const errors_1 = require("../definitions/errors");
 const path_1 = __importDefault(require("path"));
+const env_config_1 = require("../config/env.config");
 const app = (0, express_1.default)();
 const corsOption = {
-    origin: "http://localhost:5173",
+    origin: env_config_1.clientUrl,
     optionsSuccessStatus: 200,
 };
 app.use((0, cors_1.default)(corsOption));

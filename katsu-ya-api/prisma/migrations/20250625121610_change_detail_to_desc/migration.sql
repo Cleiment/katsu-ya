@@ -5,5 +5,5 @@
 
 */
 -- AlterTable
-ALTER TABLE `menu` DROP COLUMN `detail`,
-    ADD COLUMN `desc` TEXT NOT NULL DEFAULT '';
+ALTER TABLE `Menu` DROP COLUMN `detail`,
+    ADD COLUMN `desc` TEXT NOT NULL;

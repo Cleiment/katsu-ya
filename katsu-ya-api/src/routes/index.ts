@@ -9,11 +9,12 @@ import transactionRoutes from "../services/transaction/transaction.routes"
 import { errorHandler, requestHandler } from "../tools/handler"
 import { ErrorResponse } from "../definitions/errors"
 import path from "path"
+import { clientUrl } from "../config/env.config"
 
 const app = express()
 
 const corsOption = {
-    origin: "http://localhost:5173",
+    origin: clientUrl,
     optionsSuccessStatus: 200,
 }
 
