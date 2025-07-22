@@ -156,6 +156,7 @@ export default class Transaction {
                                 price: true,
                             },
                         },
+                        menuQty: true,
                     },
                 },
                 cashier: {
@@ -557,7 +558,8 @@ export default class Transaction {
         idCart: string,
         firstName: string,
         email: string,
-        phone: string
+        phone: string,
+        finishLink: string
     ) => {
         const cart = await this.getTransactionCartById(idCart)
 
@@ -586,8 +588,11 @@ export default class Transaction {
                 quantity: item.menuQty,
                 price: item.menu.price,
             })),
-            gopay: {
-                enable_callback: true,
+            // gopay: {
+            //     enable_callback: true,
+            // },
+            callbacks: {
+                finish: "javascript:void(0)",
             },
         }
 
@@ -722,7 +727,7 @@ export default class Transaction {
             where: { id: idCart },
         })
 
-        return { transactionId: idCart }
+        return { success: "Order have been paid succesfuly!" }
     }
 
     // cancelTransactionCart = async (id: number) => {

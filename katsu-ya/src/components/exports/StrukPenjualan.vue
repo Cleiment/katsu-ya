@@ -29,7 +29,7 @@ appStore.isLoading = false
 </script>
 
 <template>
-    <div class="w-96 p-5 h-[80%] m-auto">
+    <div class="max-w-96 p-5 h-dvh m-auto">
         <div
             class="flex flex-col bg-white w-full h-fit px-4 py-5"
             v-if="transactionStore.selectedStrukTransaction"

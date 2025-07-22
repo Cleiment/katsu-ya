@@ -94,14 +94,17 @@ const initialPaymentForm: PaymentInfo = {
     idCart: '',
     firstName: '',
     email: '',
-    phone: ''
+    phone: '',
+    finishLink: route.fullPath
 }
+
 const paymentInfo = ref<PaymentInfo>(initialPaymentForm)
 
 const openPayForm = (idCart: string) => {
     paymentInfo.value = initialPaymentForm
 
     paymentInfo.value.idCart = idCart
+    paymentInfo.value.finishLink = window.location.origin + '/order/' + idCart + '/payment-success'
     isPayFormOpen.value = true
 }
 
@@ -112,17 +115,12 @@ const closePayForm = () => {
 
 const confirmPayment = async () => {
     if (await transactionStore.getPaymentToken(paymentInfo.value)) {
-        // console.log(transactionStore.paymentToken)
         if (window.snap) {
             window.snap.pay(transactionStore.paymentToken, {
                 onSuccess: async (result) => {
-                    const transactionId = await transactionStore.payOrder(
-                        paymentInfo.value.idCart,
-                        result.payment_type
-                    )
-
-                    if (typeof transactionId === 'number')
-                        router.push('/order/' + transactionId.toString() + '/payment-success')
+                    await transactionStore.payOrder(paymentInfo.value.idCart, result.payment_type)
+                    router.push('/order/' + paymentInfo.value.idCart + '/payment-success')
+                    // if (typeof transactionId === 'number')
                 }
             })
         }
@@ -196,7 +194,7 @@ appStore.isLoading = false
 <style scoped></style>
 
 <template>
-    <div class="relative flex flex-col gap-2 h-full overflow-y-auto mx-auto">
+    <div class="relative flex flex-col gap-2 h-full overflow-y-auto mx-auto w-full max-w-96">
         <div class="flex justify-between items-center">
             <p class="font-bold">Showing Orders</p>
             <div>

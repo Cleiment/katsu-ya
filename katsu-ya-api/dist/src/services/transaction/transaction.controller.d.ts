@@ -71,6 +71,7 @@ export default class Transaction {
         idUser: string;
     }) | ({
         transactionCartDetail: {
+            menuQty: number;
             menu: {
                 name: string;
                 price: number;
@@ -277,13 +278,13 @@ export default class Transaction {
         idTable: number;
         paidStatus: number;
     }>;
-    getPaymentToken: (idCart: string, firstName: string, email: string, phone: string) => Promise<{
+    getPaymentToken: (idCart: string, firstName: string, email: string, phone: string, finishLink: string) => Promise<{
         token: string;
     }>;
     finishTransactionCart: (paid: number, cart: TransactionCart) => Promise<{
         transactionId: string;
     }>;
     payCart: (idCart: string, paymentType: string) => Promise<{
-        transactionId: string;
+        success: string;
     }>;
 }

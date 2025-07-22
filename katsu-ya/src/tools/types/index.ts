@@ -356,4 +356,5 @@ export type PaymentInfo = {
     email: string
     phone: string
     cartItems?: TransactionCartDetail[]
+    finishLink: string
 }

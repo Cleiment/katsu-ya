@@ -91,7 +91,7 @@ router.get(
 
             return rs
         },
-        [Roles.cashier, Roles.guest]
+        [Roles.manager, Roles.cashier, Roles.guest]
     )
 )
 
@@ -109,7 +109,7 @@ router.post(
             )
             return rs
         },
-        [Roles.cashier, Roles.guest]
+        [Roles.manager, Roles.cashier, Roles.guest]
     )
 )
 
@@ -149,7 +149,7 @@ router.post(
             const rs = await transaction.payCart(idCart, paymentType)
             return rs
         },
-        [Roles.guest]
+        [Roles.manager, Roles.cashier, Roles.guest]
     )
 )
 
@@ -194,17 +194,21 @@ router.post(
     "/pay/get-token",
     requestHandler(
         async (req, res) => {
-            validate(["idCart", "firstName", "email", "phone"], req.body)
-            const { idCart, firstName, email, phone } = req.body
+            validate(
+                ["idCart", "firstName", "email", "phone", "finishLink"],
+                req.body
+            )
+            const { idCart, firstName, email, phone, finishLink } = req.body
             const rs = await transaction.getPaymentToken(
                 idCart,
                 firstName,
                 email,
-                phone
+                phone,
+                finishLink
             )
             return rs
         },
-        [Roles.cashier, Roles.guest]
+        [Roles.manager, Roles.cashier, Roles.guest]
     )
 )
 

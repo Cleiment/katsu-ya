@@ -14,10 +14,7 @@
             />
         </TransitionGroup>
     </div>
-    <div
-        class="flex h-screen"
-        :class="appStore.isUsingSidebar ? 'flex-col lg:flex-row' : 'flex-col'"
-    >
+    <div class="flex h-dvh" :class="appStore.isUsingSidebar ? 'flex-col lg:flex-row' : 'flex-col'">
         <SideNavbar />
         <div class="flex flex-col h-full lg:w-full pt-2 px-5 pb-5 bg-slate-100">
             <RouterView />

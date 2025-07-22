@@ -144,6 +144,7 @@ class Transaction {
                                     price: true,
                                 },
                             },
+                            menuQty: true,
                         },
                     },
                     cashier: {
@@ -480,7 +481,7 @@ class Transaction {
             yield prisma_1.default.ingredientHold.createMany({ data: ingredientHold });
             return newCart;
         });
-        this.getPaymentToken = (idCart, firstName, email, phone) => __awaiter(this, void 0, void 0, function* () {
+        this.getPaymentToken = (idCart, firstName, email, phone, finishLink) => __awaiter(this, void 0, void 0, function* () {
             const cart = yield this.getTransactionCartById(idCart);
             // Create Snap API instance
             let snap = new midtransClient.Snap({
@@ -506,8 +507,11 @@ class Transaction {
                     quantity: item.menuQty,
                     price: item.menu.price,
                 })),
-                gopay: {
-                    enable_callback: true,
+                // gopay: {
+                //     enable_callback: true,
+                // },
+                callbacks: {
+                    finish: "javascript:void(0)",
                 },
             };
             let token = "";
@@ -621,7 +625,7 @@ class Transaction {
                 },
                 where: { id: idCart },
             });
-            return { transactionId: idCart };
+            return { success: "Order have been paid succesfuly!" };
         });
         // cancelTransactionCart = async (id: number) => {
         //     const transaction = await prisma.transaction.findUniqueOrThrow({
